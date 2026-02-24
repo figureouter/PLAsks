@@ -4,14 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PL Asks — Dashboard</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%231A74FC%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%234EF286%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2214%22%20fill%3D%22url%28%23g%29%22%2F%3E%3Cg%20transform%3D%22translate%284%2C2%29%20scale%280.16%29%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%20clip-rule%3D%22evenodd%22%20d%3D%22M81.823%20103L121.564%2080.4694C122.816%2079.8435%20124.067%2079.8435%20125.006%2080.4694L217.944%20134.292C219.196%20134.918%20219.196%20136.482%20217.944%20137.108L178.203%20159.639C176.951%20160.264%20175.7%20160.264%20174.761%20159.639L81.823%20105.816C80.5713%20105.19%2080.5713%20103.626%2081.823%20103ZM187.904%20103.626L227.645%2081.0954C228.583%2080.4695%20229.835%2080.4695%20231.087%2081.0954L271.141%20104.251C272.393%20104.877%20272.393%20106.442%20271.141%20107.068L231.4%20129.598C230.148%20130.224%20228.896%20130.224%20227.958%20129.598L187.904%20106.442C186.652%20105.816%20186.652%20104.252%20187.904%20103.626ZM180.706%20171.53L180.393%20217.216C180.393%20218.468%20181.645%20219.407%20182.897%20218.781L223.264%20195.938C223.89%20195.625%20224.203%20194.999%20224.203%20194.373L224.515%20147.748C224.515%20146.496%20223.264%20145.557%20222.012%20146.183L182.584%20168.4C181.332%20169.026%20180.706%20170.278%20180.706%20171.53ZM274.896%20116.143L235.155%20138.673C234.216%20138.986%20233.59%20140.238%20233.277%20141.802V198.754C233.277%20200.006%20232.651%20200.944%20231.713%20201.57L181.958%20229.733C181.019%20230.359%20180.394%20231.298%20180.394%20232.55L180.081%20278.236C180.081%20279.488%20181.332%20280.427%20182.584%20279.801L275.209%20227.23C276.148%20226.604%20276.774%20225.665%20276.774%20224.414L277.399%20117.707C277.399%20116.456%20276.148%20115.517%20274.896%20116.143ZM171.632%20171.217L171.319%20217.842C171.319%20218.781%20170.38%20219.407%20169.441%20218.781L120.625%20190.618C119.374%20189.992%20118.122%20190.931%20118.122%20192.183L117.809%20247.257C117.809%20248.508%20116.244%20249.447%20115.306%20248.821L75.5646%20225.978C74.6258%20225.352%2074%20224.101%2074%20223.162L74.6258%20116.143C74.6258%20114.891%2076.1905%20113.952%2077.1292%20114.578L170.067%20168.4C171.006%20168.713%20171.632%20169.965%20171.632%20171.217ZM169.441%20229.42L129.7%20206.264C128.449%20205.638%20127.197%20206.264%20127.197%20207.829L126.884%20253.828C126.884%20254.767%20127.51%20256.019%20128.449%20256.644L168.19%20279.801C169.128%20280.427%20170.693%20279.488%20170.693%20278.236L171.006%20232.237C171.006%20231.298%20170.38%20230.046%20169.441%20229.42Z%22%20fill%3D%22white%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E">
 <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Source+Code+Pro:wght@400;600&display=swap" rel="stylesheet">
 <style>
   :root {
     --pl-black: #000000;
-    --pl-green: #21B573;
-    --pl-green-dark: #1A9A62;
-    --pl-teal: #0FCCCE;
-    --pl-green-light: #E9F7F0;
+    --pl-blue: #1A74FC;
+    --pl-green: #4EF286;
+    --pl-green-dark: #2DB86A;
+    --pl-teal: #35C48A;
+    --pl-green-light: #E9F9F0;
     --gray: #333333;
     --gray-100: #666666;
     --gray-80: #878787;
@@ -38,7 +40,7 @@
   .loading-overlay.hidden { opacity: 0; pointer-events: none; }
   .loading-spinner {
     width: 40px; height: 40px; border: 3px solid var(--border);
-    border-top-color: var(--pl-green); border-radius: 50%;
+    border-top-color: var(--pl-blue); border-radius: 50%;
     animation: spin 0.8s linear infinite; margin-bottom: 16px;
   }
   .loading-text { font-size: 14px; color: var(--gray-80); }
@@ -54,7 +56,7 @@
 
   /* === HERO === */
   .hero {
-    background: linear-gradient(135deg, #21B573 0%, #0FCCCE 50%, #21B5A0 100%);
+    background: linear-gradient(135deg, #1A74FC 0%, #35C48A 50%, #4EF286 100%);
     padding: 56px 0 52px; position: relative; overflow: hidden;
   }
   .hero::after {
@@ -110,9 +112,9 @@
     color: var(--gray-100); cursor: pointer; transition: all 0.2s ease;
     font-family: inherit;
   }
-  .dp-preset:hover { border-color: var(--pl-green); color: var(--pl-green-dark); }
+  .dp-preset:hover { border-color: var(--pl-blue); color: var(--pl-blue); }
   .dp-preset.active {
-    background: var(--pl-green); color: white; border-color: var(--pl-green);
+    background: var(--pl-blue); color: white; border-color: var(--pl-blue);
   }
   .dp-sep {
     width: 1px; height: 28px; background: var(--border); flex-shrink: 0;
@@ -129,14 +131,14 @@
     font-size: 13px; font-family: inherit; color: var(--gray);
     background: var(--gray-light); width: 140px; transition: border-color 0.2s;
   }
-  .dp-input:focus { outline: none; border-color: var(--pl-green); }
+  .dp-input:focus { outline: none; border-color: var(--pl-blue); }
   .dp-apply {
     padding: 6px 16px; border-radius: 8px; border: none;
-    background: var(--pl-green); color: white; font-size: 12px;
+    background: var(--pl-blue); color: white; font-size: 12px;
     font-weight: 600; cursor: pointer; font-family: inherit;
     transition: all 0.2s;
   }
-  .dp-apply:hover { background: var(--pl-green-dark); }
+  .dp-apply:hover { background: #1560D4; }
 
   /* === STATS === */
   .stats-row {
@@ -152,7 +154,7 @@
   .stat-card:hover { box-shadow: var(--card-shadow-hover); transform: translateY(-2px); }
   .stat-number {
     font-family: 'Source Code Pro', monospace; font-size: 36px; font-weight: 600;
-    color: var(--pl-green); line-height: 1; margin-bottom: 6px;
+    color: var(--pl-blue); line-height: 1; margin-bottom: 6px;
   }
   .stat-label { font-size: 13px; font-weight: 500; color: var(--gray-100); }
   .stat-detail {
@@ -163,7 +165,7 @@
   /* === MAIN === */
   .main { padding: 48px 0 64px; }
   .section-title {
-    font-size: 12px; font-weight: 600; color: var(--pl-green-dark);
+    font-size: 12px; font-weight: 600; color: var(--pl-blue);
     letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 20px;
   }
 
@@ -181,14 +183,14 @@
   }
   .bar-track { flex: 1; height: 22px; background: var(--gray-light); border-radius: 6px; overflow: hidden; }
   .bar-fill { height: 100%; border-radius: 6px; transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1); }
-  .bar-fill.c0 { background: linear-gradient(90deg, #21B573, #0FCCCE); }
-  .bar-fill.c1 { background: var(--pl-green); }
-  .bar-fill.c2 { background: #33C484; }
-  .bar-fill.c3 { background: #4DD396; }
-  .bar-fill.c4 { background: #73DFAF; }
-  .bar-fill.c5 { background: #99E8C5; }
-  .bar-fill.c6 { background: #B5EFDA; }
-  .bar-fill.c7 { background: #D0F5E8; }
+  .bar-fill.c0 { background: linear-gradient(90deg, #1A74FC, #4EF286); }
+  .bar-fill.c1 { background: linear-gradient(90deg, #1A74FC, #35C48A); }
+  .bar-fill.c2 { background: #2A8CFC; }
+  .bar-fill.c3 { background: #35A4E8; }
+  .bar-fill.c4 { background: #3BB89C; }
+  .bar-fill.c5 { background: #78DDA0; }
+  .bar-fill.c6 { background: #A3E8BA; }
+  .bar-fill.c7 { background: #C8F2D6; }
   .bar-value {
     font-family: 'Source Code Pro', monospace; font-size: 11.5px;
     font-weight: 600; color: var(--gray-100); min-width: 28px; flex-shrink: 0;
@@ -211,7 +213,7 @@
   .ring-label { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; }
   .ring-label .big {
     font-family: 'Source Code Pro', monospace; font-size: 32px; font-weight: 600;
-    color: var(--pl-green); display: block; line-height: 1;
+    color: var(--pl-blue); display: block; line-height: 1;
   }
   .ring-label .small { font-size: 11px; color: var(--gray-80); margin-top: 2px; }
   .resolution-card h3 { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
@@ -231,7 +233,7 @@
   .flow-card:hover { box-shadow: var(--card-shadow-hover); transform: translateY(-2px); }
   .flow-num {
     width: 36px; height: 36px;
-    background: linear-gradient(135deg, #21B573, #0FCCCE);
+    background: linear-gradient(135deg, #1A74FC, #4EF286);
     color: white; border-radius: 50%;
     display: inline-flex; align-items: center; justify-content: center;
     font-family: 'Source Code Pro', monospace; font-weight: 600; font-size: 15px;
@@ -240,7 +242,7 @@
   .flow-card h4 { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
   .flow-card p { font-size: 13px; color: var(--gray-100); line-height: 1.55; }
   .flow-arrow { display: flex; align-items: center; justify-content: center; padding: 0 8px; }
-  .flow-arrow svg { width: 32px; height: 32px; color: var(--pl-green); opacity: 0.4; }
+  .flow-arrow svg { width: 32px; height: 32px; color: var(--pl-blue); opacity: 0.4; }
 
   /* === PILLS === */
   .pills-section { margin-bottom: 48px; }
@@ -251,7 +253,7 @@
     border-radius: 100px; padding: 10px 18px;
     font-size: 13px; font-weight: 500; color: var(--gray-100); transition: all 0.25s ease;
   }
-  .pill:hover { border-color: var(--pl-green); color: var(--pl-green-dark); background: var(--pl-green-light); }
+  .pill:hover { border-color: var(--pl-blue); color: var(--pl-blue); background: #EEF4FF; }
   .pill .pi { font-size: 16px; flex-shrink: 0; }
 
   /* === TESTIMONIALS === */
@@ -266,14 +268,14 @@
   .quote-mark {
     font-family: 'Source Serif 4', Georgia, serif;
     font-size: 48px; font-weight: 600; line-height: 1;
-    color: var(--pl-green); margin-bottom: 8px; display: block;
+    color: var(--pl-blue); margin-bottom: 8px; display: block;
   }
   .testimonial-card .quote {
     font-family: 'Source Serif 4', Georgia, serif;
     font-size: 14.5px; color: var(--gray); line-height: 1.65;
     font-style: italic; margin-bottom: 20px;
   }
-  .testimonial-card .attribution { font-size: 14px; font-weight: 600; color: var(--pl-green-dark); margin-bottom: 2px; }
+  .testimonial-card .attribution { font-size: 14px; font-weight: 600; color: var(--pl-blue); margin-bottom: 2px; }
   .testimonial-card .attr-role { font-size: 12px; color: var(--gray-80); font-weight: 400; }
 
   /* === CTA === */
@@ -284,20 +286,20 @@
   .cta-section::before {
     content: ''; position: absolute; top: -60%; left: 50%; transform: translateX(-50%);
     width: 700px; height: 500px;
-    background: radial-gradient(circle, rgba(33,181,115,0.12) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(26,116,252,0.12) 0%, transparent 70%);
     pointer-events: none;
   }
   .cta-section h2 { font-size: 26px; font-weight: 700; color: var(--white); margin-bottom: 10px; position: relative; }
   .cta-section p { font-size: 15px; color: rgba(255,255,255,0.5); margin-bottom: 28px; position: relative; }
   .cta-btn {
     display: inline-flex; align-items: center; gap: 8px;
-    background: linear-gradient(135deg, #21B573, #0FCCCE);
+    background: linear-gradient(135deg, #1A74FC, #4EF286);
     color: white; border: none; border-radius: 10px;
     padding: 14px 32px; font-family: 'Helvetica Neue', Helvetica, sans-serif;
     font-size: 15px; font-weight: 600; cursor: pointer;
     transition: all 0.25s ease; position: relative; text-decoration: none;
   }
-  .cta-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(33,181,115,0.4); }
+  .cta-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(26,116,252,0.35); }
 
   /* === FOOTER === */
   .footer { text-align: center; padding: 32px 0; font-size: 12px; color: var(--gray-80); }
@@ -325,8 +327,8 @@
 <svg width="0" height="0" style="position:absolute">
   <defs>
     <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" style="stop-color:#21B573"/>
-      <stop offset="100%" style="stop-color:#0FCCCE"/>
+      <stop offset="0%" style="stop-color:#1A74FC"/>
+      <stop offset="100%" style="stop-color:#4EF286"/>
     </linearGradient>
   </defs>
 </svg>
@@ -342,10 +344,8 @@
 <div class="hero">
   <div class="container">
     <div class="hero-top">
-      <svg class="hero-logo" viewBox="0 0 64 64" fill="none">
-        <path d="M32 4L4 20v24l28 16 28-16V20L32 4z" fill="rgba(255,255,255,0.15)" stroke="white" stroke-width="2"/>
-        <path d="M32 4L4 20l28 16 28-16L32 4z" fill="rgba(255,255,255,0.1)"/>
-        <path d="M32 36v28l28-16V24L32 36z" fill="rgba(255,255,255,0.2)"/>
+      <svg class="hero-logo" viewBox="0 0 352 354" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M81.823 103L121.564 80.4694C122.816 79.8435 124.067 79.8435 125.006 80.4694L217.944 134.292C219.196 134.918 219.196 136.482 217.944 137.108L178.203 159.639C176.951 160.264 175.7 160.264 174.761 159.639L81.823 105.816C80.5713 105.19 80.5713 103.626 81.823 103ZM187.904 103.626L227.645 81.0954C228.583 80.4695 229.835 80.4695 231.087 81.0954L271.141 104.251C272.393 104.877 272.393 106.442 271.141 107.068L231.4 129.598C230.148 130.224 228.896 130.224 227.958 129.598L187.904 106.442C186.652 105.816 186.652 104.252 187.904 103.626ZM180.706 171.53L180.393 217.216C180.393 218.468 181.645 219.407 182.897 218.781L223.264 195.938C223.89 195.625 224.203 194.999 224.203 194.373L224.515 147.748C224.515 146.496 223.264 145.557 222.012 146.183L182.584 168.4C181.332 169.026 180.706 170.278 180.706 171.53ZM274.896 116.143L235.155 138.673C234.216 138.986 233.59 140.238 233.277 141.802V198.754C233.277 200.006 232.651 200.944 231.713 201.57L181.958 229.733C181.019 230.359 180.394 231.298 180.394 232.55L180.081 278.236C180.081 279.488 181.332 280.427 182.584 279.801L275.209 227.23C276.148 226.604 276.774 225.665 276.774 224.414L277.399 117.707C277.399 116.456 276.148 115.517 274.896 116.143ZM171.632 171.217L171.319 217.842C171.319 218.781 170.38 219.407 169.441 218.781L120.625 190.618C119.374 189.992 118.122 190.931 118.122 192.183L117.809 247.257C117.809 248.508 116.244 249.447 115.306 248.821L75.5646 225.978C74.6258 225.352 74 224.101 74 223.162L74.6258 116.143C74.6258 114.891 76.1905 113.952 77.1292 114.578L170.067 168.4C171.006 168.713 171.632 169.965 171.632 171.217ZM169.441 229.42L129.7 206.264C128.449 205.638 127.197 206.264 127.197 207.829L126.884 253.828C126.884 254.767 127.51 256.019 128.449 256.644L168.19 279.801C169.128 280.427 170.693 279.488 170.693 278.236L171.006 232.237C171.006 231.298 170.38 230.046 169.441 229.42Z" fill="white"/>
       </svg>
       <span class="hero-label">Protocol Labs &middot; PL Asks</span>
     </div>
@@ -374,6 +374,13 @@
       <input type="date" class="dp-input" id="dp-to">
       <button class="dp-apply" id="dp-apply">Apply</button>
     </div>
+  </div>
+</div>
+
+<!-- REFRESH NOTE -->
+<div style="max-width:1080px; margin:10px auto 0; padding:0 32px;">
+  <div style="font-size:11px; color:var(--gray-80); text-align:center;">
+    💡 Data not refreshing? Do a hard refresh — <strong>Cmd+Shift+R</strong> (Mac) or <strong>Ctrl+Shift+R</strong> (Windows)
   </div>
 </div>
 
@@ -652,9 +659,9 @@ function render(m) {
 
   document.getElementById('breakdown-container').innerHTML = `
     <div class="breakdown-row"><span class="breakdown-label">Fully addressed</span>
-      <span class="breakdown-val" style="color:var(--pl-green)">${m.fullyPct}%</span></div>
+      <span class="breakdown-val" style="color:var(--pl-blue)">${m.fullyPct}%</span></div>
     <div class="breakdown-row"><span class="breakdown-label">Partially addressed</span>
-      <span class="breakdown-val" style="color:#4DD396">${m.partialPct}%</span></div>
+      <span class="breakdown-val" style="color:#3BB89C">${m.partialPct}%</span></div>
     <div class="breakdown-row"><span class="breakdown-label">Other outcomes</span>
       <span class="breakdown-val" style="color:var(--gray-80)">${m.otherPct}%</span></div>`;
 

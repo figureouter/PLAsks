@@ -498,8 +498,7 @@
 
   <div class="cta-section animate-in">
     <h2>Have an ask? We're here to help.</h2>
-    <p>Drop it in your TG group, mention it in your investor update, or reach out directly.</p>
-    <a href="#" class="cta-btn">Submit an Ask <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a>
+    <p>Drop it in your TG group, mention it in your investor update, or reach out directly to your PL point of contact.</p>
   </div>
 
 </div></div>
@@ -510,12 +509,17 @@
 </div>
 
 <script>
-const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/1oN7wP2Bt38GuRdyr95CeSg96maH-Zbg9fZNmoFtWQNQ/export?format=csv&gid=0';
+// Multiple fetch strategies for Google Sheets (tries each until one works)
+const SHEET_URLS = [
+  'https://docs.google.com/spreadsheets/d/1oN7wP2Bt38GuRdyr95CeSg96maH-Zbg9fZNmoFtWQNQ/export?format=csv&gid=0',
+  'https://docs.google.com/spreadsheets/d/1oN7wP2Bt38GuRdyr95CeSg96maH-Zbg9fZNmoFtWQNQ/gviz/tq?tqx=out:csv&gid=0'
+];
 
 const COL_MAP = {
-  'Team': 'team', 'Status': 'status', 'Category': 'category',
+  'Status': 'status', 'Category': 'category',
   'Days to First Response': 'daysResponse', 'Days to Close': 'daysClose',
   'Received': 'received', 'Team Type': 'teamType',
+  'Received Month': 'receivedMonth', 'Team ID': 'teamId',
 };
 
 // Store all rows globally for filtering
@@ -560,7 +564,10 @@ function filterByDateRange(rows, from, to) {
 
 function calcMetrics(rows) {
   const total = rows.length;
-  const teams = new Set(rows.map(r => r.team).filter(Boolean));
+
+  // Count unique teams via anonymized Team ID
+  const teams = new Set(rows.map(r => r.teamId).filter(Boolean));
+
   const fully = rows.filter(r => (r.status||'').toLowerCase().includes('fully')).length;
   const partial = rows.filter(r => (r.status||'').toLowerCase().includes('partial')).length;
   const addressed = fully + partial;
@@ -570,13 +577,15 @@ function calcMetrics(rows) {
   const otherPct = 100 - fullyPct - partialPct;
 
   const median = arr => {
+    // Filter: must be a number, non-negative, reasonable range, and not "NA"
     const s = arr.filter(x => !isNaN(x) && x >= 0 && x <= 365).sort((a,b) => a-b);
     if (!s.length) return null;
     const mid = Math.floor(s.length / 2);
     return s.length % 2 ? s[mid] : (s[mid-1] + s[mid]) / 2;
   };
-  const medResponse = median(rows.map(r => parseFloat(r.daysResponse)));
-  const medClose = median(rows.map(r => parseFloat(r.daysClose)));
+  const parseNum = v => { const n = parseFloat(v); return (isNaN(n) || v === 'NA' || v === '') ? NaN : n; };
+  const medResponse = median(rows.map(r => parseNum(r.daysResponse)));
+  const medClose = median(rows.map(r => parseNum(r.daysClose)));
 
   const catLabels = {
     'Go-to-Market / Growth': 'GTM & Growth',
@@ -717,33 +726,50 @@ async function loadDashboard() {
   const loader = document.getElementById('loader');
   const errEl = document.getElementById('error');
 
-  try {
-    const resp = await fetch(SHEET_CSV_URL);
-    if (!resp.ok) throw new Error(`Sheet returned ${resp.status}`);
-    const text = await resp.text();
-    const allRows = parseCSVSimple(text);
-    if (allRows.length < 2) throw new Error('Sheet appears empty');
-    const headers = allRows[0];
-    ALL_ROWS = allRows.slice(1).map(v => mapRow(headers, v)).filter(r => r.status);
-    render(calcMetrics(ALL_ROWS));
-    loader.classList.add('hidden');
-  } catch (e) {
-    loader.classList.add('hidden');
-    errEl.innerHTML = `<strong>Error loading sheet:</strong> ${e.message}<br>Check that the sheet sharing is set to "Anyone with the link".`;
-    errEl.classList.add('show');
-    // Fallback demo
-    ALL_ROWS = [];
-    render({
-      total: 285, teams: 112, addressed: 216, addressedPct: 76,
-      fullyPct: 64, partialPct: 12, otherPct: 24,
-      medResponse: 0.3, medClose: 4,
-      categories: [['GTM & Growth',68],['Fundraising',55],['Social Amplification',53],
-        ['Hiring & Talent',36],['Product & UX',23],['Legal & Compliance',9],
-        ['Dev Outreach',9],['Tokenomics',5]],
-      maxCat: 68, sinceLabel: 'Fallback demo data',
-      disclaimerLabel: '📊 Fallback demo data',
-    });
+  let text = null;
+  let lastErr = null;
+
+  // Try each URL until one works
+  for (const url of SHEET_URLS) {
+    try {
+      const resp = await fetch(url);
+      if (!resp.ok) { lastErr = `HTTP ${resp.status}`; continue; }
+      const t = await resp.text();
+      if (t.length < 50 || t.includes('<!DOCTYPE')) { lastErr = 'Got HTML instead of CSV'; continue; }
+      text = t;
+      break;
+    } catch (e) { lastErr = e.message; }
   }
+
+  if (text) {
+    try {
+      const allRows = parseCSVSimple(text);
+      if (allRows.length < 2) throw new Error('Sheet appears empty');
+      const headers = allRows[0];
+      ALL_ROWS = allRows.slice(1).map(v => mapRow(headers, v)).filter(r => r.status);
+      render(calcMetrics(ALL_ROWS));
+      loader.classList.add('hidden');
+      return;
+    } catch (e) { lastErr = e.message; }
+  }
+
+  // All URLs failed
+  loader.classList.add('hidden');
+  errEl.innerHTML = `<strong>Error loading sheet:</strong> ${lastErr}<br>
+    <strong>Fix:</strong> Open your Google Sheet → File → Share → Publish to web → Select sheet tab → CSV format → Publish.<br>
+    Then update the first URL in SHEET_URLS in index.html with the published URL.`;
+  errEl.classList.add('show');
+  ALL_ROWS = [];
+  render({
+    total: 308, teams: 113, addressed: 238, addressedPct: 77,
+    fullyPct: 64, partialPct: 12, otherPct: 24,
+    medResponse: 0.3, medClose: 4,
+    categories: [['GTM & Growth',68],['Fundraising',55],['Social Amplification',53],
+      ['Hiring & Talent',36],['Product & UX',23],['Legal & Compliance',9],
+      ['Dev Outreach',9],['Tokenomics',5]],
+    maxCat: 68, sinceLabel: 'Fallback demo data',
+    disclaimerLabel: '📊 Fallback demo data',
+  });
 }
 
 const observer = new IntersectionObserver(entries => {

@@ -140,6 +140,33 @@
   }
   .dp-apply:hover { background: #1560D4; }
 
+  /* === TEAM TYPE FILTER === */
+  .filter-bar {
+    max-width: 1080px; margin: 10px auto 0; padding: 0 32px;
+  }
+  .filter-inner {
+    background: var(--white); border-radius: 12px; padding: 12px 24px;
+    box-shadow: var(--card-shadow); border: 1px solid var(--border);
+    display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  }
+  .filter-label {
+    font-size: 13px; font-weight: 600; color: var(--gray); white-space: nowrap;
+  }
+  .tf-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+  .tf-chip {
+    padding: 5px 14px; border-radius: 100px; border: 1px solid var(--border);
+    background: var(--white); font-size: 12px; font-weight: 500;
+    color: var(--gray-100); cursor: pointer; transition: all 0.2s ease;
+    font-family: inherit; user-select: none;
+  }
+  .tf-chip:hover { border-color: var(--pl-blue); color: var(--pl-blue); }
+  .tf-chip.active {
+    background: var(--pl-blue); color: white; border-color: var(--pl-blue);
+  }
+  .tf-chip.active:hover {
+    background: #1560D4; border-color: #1560D4;
+  }
+
   /* === STATS === */
   .stats-row {
     display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
@@ -360,7 +387,8 @@
   <div class="date-picker-inner">
     <span class="dp-label">📅 Time Period</span>
     <div class="dp-presets">
-      <button class="dp-preset active" data-range="180">Last 6 Months</button>
+      <button class="dp-preset active" data-range="365">Last 12 Months</button>
+      <button class="dp-preset" data-range="180">Last 6 Months</button>
       <button class="dp-preset" data-range="90">Last 90 Days</button>
       <button class="dp-preset" data-range="30">Last 30 Days</button>
     </div>
@@ -371,6 +399,19 @@
       <label>To</label>
       <input type="date" class="dp-input" id="dp-to">
       <button class="dp-apply" id="dp-apply">Apply</button>
+    </div>
+  </div>
+</div>
+
+<!-- TEAM TYPE FILTER -->
+<div class="filter-bar">
+  <div class="filter-inner">
+    <span class="filter-label">🏢 Team Type</span>
+    <div class="tf-chips">
+      <button class="tf-chip active" data-type="PLC">PLC</button>
+      <button class="tf-chip active" data-type="PLVS">PLVS</button>
+      <button class="tf-chip active" data-type="PL Network Team">PL Network</button>
+      <button class="tf-chip active" data-type="_other">Other</button>
     </div>
   </div>
 </div>
@@ -496,7 +537,7 @@
 
   <div class="cta-section animate-in">
     <h2>Have an ask? We're here to help.</h2>
-    <p>Mention it in your investor update or reach out directly to your PL point of contact.</p>
+    <p>Drop it in your TG group, mention it in your investor update, or reach out directly to your PL point of contact.</p>
   </div>
 
 </div></div>
@@ -523,6 +564,66 @@ const COL_MAP = {
 // Store all rows globally for filtering
 let ALL_ROWS = [];
 
+// Known primary team types — everything else falls under "Other"
+const PRIMARY_TYPES = ['PLC', 'PLVS', 'PL Network Team'];
+
+function getSelectedTypes() {
+  const chips = document.querySelectorAll('.tf-chip.active');
+  const types = new Set();
+  chips.forEach(c => types.add(c.dataset.type));
+  return types;
+}
+
+function matchesTeamType(row, selectedTypes) {
+  const t = (row.teamType || '').trim();
+  // Check if it's a primary type
+  if (PRIMARY_TYPES.includes(t)) {
+    return selectedTypes.has(t);
+  }
+  // PLC+PLVS matches if either PLC or PLVS is selected
+  if (t === 'PLC+PLVS') {
+    return selectedTypes.has('PLC') || selectedTypes.has('PLVS');
+  }
+  // Everything else (PL Network, PL Neuro, etc) = "Other"
+  return selectedTypes.has('_other');
+}
+
+function getFilteredRows() {
+  const selectedTypes = getSelectedTypes();
+
+  // Get current date range
+  let from = null, to = null;
+  const activePreset = document.querySelector('.dp-preset.active');
+  if (activePreset) {
+    const range = activePreset.dataset.range;
+    if (range !== 'all') {
+      from = new Date();
+      from.setDate(from.getDate() - parseInt(range));
+      from.setHours(0,0,0,0);
+    }
+  } else {
+    const fromVal = document.getElementById('dp-from').value;
+    const toVal = document.getElementById('dp-to').value;
+    if (fromVal) from = new Date(fromVal + 'T00:00:00');
+    if (toVal) to = new Date(toVal + 'T23:59:59');
+  }
+
+  return ALL_ROWS.filter(r => {
+    // Date filter
+    const d = parseDate(r.received);
+    if (from && (!d || d < from)) return false;
+    if (to && (!d || d > to)) return false;
+    // Team type filter
+    if (!matchesTeamType(r, selectedTypes)) return false;
+    return true;
+  });
+}
+
+function refreshDashboard() {
+  const filtered = getFilteredRows();
+  render(calcMetrics(filtered));
+}
+
 function parseCSVSimple(text) {
   const rows = []; let row = []; let cell = ''; let inQ = false;
   for (let i = 0; i < text.length; i++) {
@@ -548,16 +649,6 @@ function parseDate(str) {
   if (!str) return null;
   const d = new Date(str);
   return isNaN(d) ? null : d;
-}
-
-function filterByDateRange(rows, from, to) {
-  return rows.filter(r => {
-    const d = parseDate(r.received);
-    if (!d) return false;
-    if (from && d < from) return false;
-    if (to && d > to) return false;
-    return true;
-  });
 }
 
 function calcMetrics(rows) {
@@ -678,11 +769,6 @@ function render(m) {
 }
 
 // === DATE PICKER LOGIC ===
-function applyFilter(from, to) {
-  const filtered = filterByDateRange(ALL_ROWS, from, to);
-  render(calcMetrics(filtered));
-}
-
 function setActivePreset(btn) {
   document.querySelectorAll('.dp-preset').forEach(b => b.classList.remove('active'));
   if (btn) btn.classList.add('active');
@@ -692,31 +778,24 @@ function setActivePreset(btn) {
 document.querySelectorAll('.dp-preset').forEach(btn => {
   btn.addEventListener('click', () => {
     setActivePreset(btn);
-    const range = btn.dataset.range;
-    // Clear custom inputs
     document.getElementById('dp-from').value = '';
     document.getElementById('dp-to').value = '';
-
-    if (range === 'all') {
-      render(calcMetrics(ALL_ROWS));
-    } else {
-      const days = parseInt(range);
-      const from = new Date();
-      from.setDate(from.getDate() - days);
-      from.setHours(0,0,0,0);
-      applyFilter(from, null);
-    }
+    refreshDashboard();
   });
 });
 
 // Custom date apply
 document.getElementById('dp-apply').addEventListener('click', () => {
-  const fromVal = document.getElementById('dp-from').value;
-  const toVal = document.getElementById('dp-to').value;
-  const from = fromVal ? new Date(fromVal + 'T00:00:00') : null;
-  const to = toVal ? new Date(toVal + 'T23:59:59') : null;
-  setActivePreset(null); // deselect presets
-  applyFilter(from, to);
+  setActivePreset(null);
+  refreshDashboard();
+});
+
+// === TEAM TYPE FILTER ===
+document.querySelectorAll('.tf-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    chip.classList.toggle('active');
+    refreshDashboard();
+  });
 });
 
 // === LOAD DATA ===
@@ -745,29 +824,52 @@ async function loadDashboard() {
       if (allRows.length < 2) throw new Error('Sheet appears empty');
       const headers = allRows[0];
       ALL_ROWS = allRows.slice(1).map(v => mapRow(headers, v)).filter(r => r.status);
-      render(calcMetrics(ALL_ROWS));
+      refreshDashboard();
       loader.classList.add('hidden');
       return;
     } catch (e) { lastErr = e.message; }
   }
 
-  // All URLs failed
+  // All URLs failed — generate synthetic demo rows so filters still work
   loader.classList.add('hidden');
   errEl.innerHTML = `<strong>Error loading sheet:</strong> ${lastErr}<br>
     <strong>Fix:</strong> Open your Google Sheet → File → Share → Publish to web → Select sheet tab → CSV format → Publish.<br>
     Then update the first URL in SHEET_URLS in index.html with the published URL.`;
   errEl.classList.add('show');
-  ALL_ROWS = [];
-  render({
-    total: 308, teams: 113, addressed: 238, addressedPct: 77,
-    fullyPct: 64, partialPct: 12, otherPct: 24,
-    medResponse: 0.3, medClose: 4,
-    categories: [['GTM & Growth',68],['Fundraising',55],['Social Amplification',53],
-      ['Hiring & Talent',36],['Product & UX',23],['Legal & Compliance',9],
-      ['Dev Outreach',9],['Tokenomics',5]],
-    maxCat: 68, sinceLabel: 'Fallback demo data',
-    disclaimerLabel: '📊 Fallback demo data',
-  });
+
+  // Build synthetic rows matching real data distribution
+  const demoRows = [];
+  const demoCats = [
+    ['Go-to-Market / Growth', 74], ['Fundraising', 62], ['Social & Ecosystem Amplification', 56],
+    ['Hiring & Talent', 37], ['Product & UX Feedback', 26],
+    ['Developer Outreach & Distribution', 10], ['Legal & Compliance', 9], ['Tokenomics', 5]
+  ];
+  const demoTypes = [
+    ['PLC', 0.55], ['PLVS', 0.18], ['PL Network Team', 0.18], ['PLC+PLVS', 0.03], ['PL Network', 0.04], ['PL Neuro', 0.02]
+  ];
+  const demoStatuses = [
+    ['Closed - Fully Addressed', 0.66], ['Closed - Partially addressed', 0.11],
+    ['Closed - Unaddressable', 0.09], ['Closed - Unresponsive', 0.08],
+    ['Closed - No Longer Needed', 0.04], ['In Progress', 0.02]
+  ];
+  let teamCounter = 0;
+  const pickWeighted = arr => { let r = Math.random(), sum = 0; for (const [v, w] of arr) { sum += w; if (r <= sum) return v; } return arr[0][0]; };
+  for (const [cat, count] of demoCats) {
+    for (let i = 0; i < count; i++) {
+      const d = new Date(2025, Math.floor(Math.random() * 13), Math.floor(Math.random() * 28) + 1);
+      demoRows.push({
+        received: d.toLocaleDateString('en-US'),
+        status: pickWeighted(demoStatuses),
+        category: cat,
+        teamType: pickWeighted(demoTypes),
+        teamId: 'team_' + (teamCounter++ % 113),
+        daysResponse: (Math.random() * 2).toFixed(1),
+        daysClose: (Math.random() * 10 + 1).toFixed(1),
+      });
+    }
+  }
+  ALL_ROWS = demoRows;
+  refreshDashboard();
 }
 
 const observer = new IntersectionObserver(entries => {

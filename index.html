@@ -410,8 +410,9 @@
     <div class="tf-chips">
       <button class="tf-chip active" data-type="PLC">PLC</button>
       <button class="tf-chip active" data-type="PLVS">PLVS</button>
-      <button class="tf-chip active" data-type="PL Network Team">PL Network</button>
-      <button class="tf-chip active" data-type="_other">Other</button>
+      <button class="tf-chip active" data-type="PLC+PLVS">PLC+PLVS</button>
+      <button class="tf-chip active" data-type="PL Network">PL Network</button>
+      <button class="tf-chip active" data-type="PL Neuro">PL Neuro</button>
     </div>
   </div>
 </div>
@@ -564,8 +565,8 @@ const COL_MAP = {
 // Store all rows globally for filtering
 let ALL_ROWS = [];
 
-// Known primary team types — everything else falls under "Other"
-const PRIMARY_TYPES = ['PLC', 'PLVS', 'PL Network Team'];
+// All team types with their own chip — exact match
+const ALL_TYPES = ['PLC', 'PLVS', 'PLC+PLVS', 'PL Network', 'PL Neuro'];
 
 function getSelectedTypes() {
   const chips = document.querySelectorAll('.tf-chip.active');
@@ -576,16 +577,7 @@ function getSelectedTypes() {
 
 function matchesTeamType(row, selectedTypes) {
   const t = (row.teamType || '').trim();
-  // Check if it's a primary type
-  if (PRIMARY_TYPES.includes(t)) {
-    return selectedTypes.has(t);
-  }
-  // PLC+PLVS matches if either PLC or PLVS is selected
-  if (t === 'PLC+PLVS') {
-    return selectedTypes.has('PLC') || selectedTypes.has('PLVS');
-  }
-  // Everything else (PL Network, PL Neuro, etc) = "Other"
-  return selectedTypes.has('_other');
+  return selectedTypes.has(t);
 }
 
 function getFilteredRows() {
@@ -845,7 +837,7 @@ async function loadDashboard() {
     ['Developer Outreach & Distribution', 10], ['Legal & Compliance', 9], ['Tokenomics', 5]
   ];
   const demoTypes = [
-    ['PLC', 0.55], ['PLVS', 0.18], ['PL Network Team', 0.18], ['PLC+PLVS', 0.03], ['PL Network', 0.04], ['PL Neuro', 0.02]
+    ['PLC', 0.56], ['PL Network', 0.23], ['PLVS', 0.17], ['PLC+PLVS', 0.03], ['PL Neuro', 0.01]
   ];
   const demoStatuses = [
     ['Closed - Fully Addressed', 0.66], ['Closed - Partially addressed', 0.11],
